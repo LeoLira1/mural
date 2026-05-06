@@ -37,6 +37,13 @@ jobs:
       - name: Generate platform boilerplate
         run: flutter create . --project-name mural --org com.camda --platforms android
 
+      - name: Inject INTERNET permission into AndroidManifest
+        run: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          if ! grep -q 'android.permission.INTERNET' "$MANIFEST"; then
+            sed -i 's|<application|<uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>\n    <application|' "$MANIFEST"
+          fi
+
       - name: Flutter pub get
         run: flutter pub get
 
