@@ -2,7 +2,9 @@ name: Build & Release APK
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'claude/flutter-streamlit-sync-KilHf'
     tags:
       - 'v*.*.*'
   workflow_dispatch:
@@ -48,15 +50,17 @@ jobs:
           mv build/app/outputs/flutter-apk/app-release.apk "mural-camda-${VERSION}.apk"
           echo "APK_FILE=mural-camda-${VERSION}.apk" >> $GITHUB_ENV
 
-      # ── Release em push para main ──────────────────────────────────────────
-      - name: Create / update "latest" release (main branch)
-        if: github.ref == 'refs/heads/main'
+      # ── Release em push para branch principal ─────────────────────────────────
+      - name: Create / update "latest" release (default branch)
+        if: |
+          github.ref == 'refs/heads/main' ||
+          github.ref == 'refs/heads/claude/flutter-streamlit-sync-KilHf'
         uses: ncipollo/release-action@v1
         with:
           tag: latest
           name: "Latest Build"
           body: |
-            Build automático do último commit em `main`.
+            Build automático do último commit na branch principal.
 
             **Instalação**
             1. Baixe o arquivo `mural-camda-latest.apk`
