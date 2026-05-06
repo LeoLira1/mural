@@ -13,7 +13,7 @@ class TursoService {
   }
 
   static Future<String> _baseUrl() async {
-    final url = await AppConfig.getUrl();
+    final url = (await AppConfig.getUrl()).trimRight().replaceAll(RegExp(r'/+$'), '');
     return '$url/v2/pipeline';
   }
 
@@ -112,15 +112,15 @@ class TursoService {
     ]);
   }
 
-  /// Verifica se as credenciais são válidas
-  static Future<bool> testConnection() async {
+  /// Verifica se as credenciais são válidas. Retorna null em caso de sucesso ou a mensagem de erro.
+  static Future<String?> testConnection() async {
     try {
       await _pipeline([
-        {'sql': 'SELECT 1', 'args': []}
+        {'sql': 'SELECT 1'}
       ]);
-      return true;
-    } catch (_) {
-      return false;
+      return null;
+    } catch (e) {
+      return e.toString();
     }
   }
 }
