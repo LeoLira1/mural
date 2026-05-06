@@ -1,4 +1,11 @@
-# Flutter/Dart
+# Flutter/Dart — generated platform dirs (criados pelo CI via flutter create)
+android/
+ios/
+linux/
+macos/
+windows/
+web/
+
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies

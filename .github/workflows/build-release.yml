@@ -1,0 +1,90 @@
+name: Build & Release APK
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build Flutter APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter (stable)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # Gera o boilerplate Android/iOS sem sobrescrever lib/ e pubspec.yaml
+      - name: Generate platform boilerplate
+        run: flutter create . --project-name mural --org com.camda --platforms android
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Build release APK
+        run: flutter build apk --release --no-tree-shake-icons
+
+      - name: Rename APK
+        run: |
+          VERSION="${GITHUB_REF_NAME:-latest}"
+          mv build/app/outputs/flutter-apk/app-release.apk "mural-camda-${VERSION}.apk"
+          echo "APK_FILE=mural-camda-${VERSION}.apk" >> $GITHUB_ENV
+
+      # ── Release em push para main ──────────────────────────────────────────
+      - name: Create / update "latest" release (main branch)
+        if: github.ref == 'refs/heads/main'
+        uses: ncipollo/release-action@v1
+        with:
+          tag: latest
+          name: "Latest Build"
+          body: |
+            Build automático do último commit em `main`.
+
+            **Instalação**
+            1. Baixe o arquivo `mural-camda-latest.apk`
+            2. No Android: Configurações → Segurança → Fontes desconhecidas ✓
+            3. Abra o APK e instale
+            4. No primeiro acesso vá em ⚙️ Configurações e informe a URL e token do Turso
+          artifacts: ${{ env.APK_FILE }}
+          artifactName: mural-camda-latest.apk
+          allowUpdates: true
+          removeArtifacts: true
+          makeLatest: true
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Release em push de tag v*.*.* ──────────────────────────────────────
+      - name: Create versioned release (tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: "Mural CAMDA ${{ github.ref_name }}"
+          body: |
+            ## Mural CAMDA ${{ github.ref_name }}
+
+            **Instalação**
+            1. Baixe o arquivo `.apk` abaixo
+            2. No Android: Configurações → Segurança → Fontes desconhecidas ✓
+            3. Abra o APK e instale
+            4. No primeiro acesso vá em ⚙️ Configurações e informe a URL e token do Turso
+          artifacts: ${{ env.APK_FILE }}
+          makeLatest: true
+          token: ${{ secrets.GITHUB_TOKEN }}
