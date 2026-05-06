@@ -76,12 +76,13 @@ class Recado {
 
   factory Recado.fromRow(List<dynamic> values) {
     // ORDER das colunas: id, autor, texto, tag, cor, criado_em, imagem
+    // Turso HTTP API returns numeric values as Strings — parse defensively.
     return Recado(
-      id: (values[0] as num).toInt(),
+      id: int.tryParse(values[0]?.toString() ?? '0') ?? 0,
       autor: values[1]?.toString() ?? 'Anônimo',
       texto: values[2]?.toString() ?? '',
       tag: TagLabel.fromString(values[3]?.toString() ?? 'aviso'),
-      cor: (values[4] as num?)?.toInt() ?? 0,
+      cor: int.tryParse(values[4]?.toString() ?? '0') ?? 0,
       criadoEm: values[5]?.toString() ?? '',
       imagem: values[6]?.toString(),
     );
