@@ -1,0 +1,39 @@
+name: mural
+description: Mural de recados CAMDA - sincronizado com o dashboard Streamlit
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # HTTP client para Turso API
+  http: ^1.2.1
+
+  # Seleção de imagens
+  image_picker: ^1.1.2
+
+  # Grid masonry (layout de post-its)
+  flutter_staggered_grid_view: ^0.7.0
+
+  # Formatação de datas
+  intl: ^0.19.0
+
+  # Armazenamento local (token/URL)
+  shared_preferences: ^2.3.2
+
+  # Decode de imagens base64
+  flutter_svg: ^2.0.10+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
