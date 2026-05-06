@@ -44,6 +44,7 @@ jobs:
       - name: Rename APK
         run: |
           VERSION="${GITHUB_REF_NAME:-latest}"
+          VERSION="${VERSION//\//-}"
           mv build/app/outputs/flutter-apk/app-release.apk "mural-camda-${VERSION}.apk"
           echo "APK_FILE=mural-camda-${VERSION}.apk" >> $GITHUB_ENV
 
