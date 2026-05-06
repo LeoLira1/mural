@@ -13,7 +13,10 @@ class TursoService {
   }
 
   static Future<String> _baseUrl() async {
-    final url = (await AppConfig.getUrl()).trimRight().replaceAll(RegExp(r'/+$'), '');
+    var url = (await AppConfig.getUrl()).trim().replaceAll(RegExp(r'/+$'), '');
+    if (url.startsWith('libsql://')) {
+      url = 'https://${url.substring(9)}';
+    }
     return '$url/v2/pipeline';
   }
 
