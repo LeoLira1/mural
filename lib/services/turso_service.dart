@@ -17,6 +17,13 @@ class TursoService {
     if (url.startsWith('libsql://')) {
       url = 'https://${url.substring(9)}';
     }
+    // libsql uses regional subdomains (e.g. .aws-us-east-2.turso.io) that have
+    // no DNS record for HTTPS; strip the region segment so the HTTP pipeline
+    // endpoint resolves correctly.
+    url = url.replaceFirstMapped(
+      RegExp(r'(https://[^.]+)\.[a-z]+-[a-z]+-[a-z]+-\d+(\.turso\.io)', caseSensitive: false),
+      (m) => '${m[1]}${m[2]}',
+    );
     return '$url/v2/pipeline';
   }
 
