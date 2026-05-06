@@ -60,10 +60,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       url: _urlCtrl.text.trim(),
       token: _tokenCtrl.text.trim(),
     );
-    final ok = await TursoService.testConnection();
+    final error = await TursoService.testConnection();
     setState(() {
       _testing = false;
-      _testResult = ok ? '✓ Conexão OK!' : '✗ Falha na conexão. Verifique a URL e o token.';
+      _testResult = error == null ? '✓ Conexão OK!' : '✗ $error';
     });
   }
 
