@@ -48,10 +48,8 @@ class _NovoRecadoDialogState extends State<NovoRecadoDialog> {
         await _picker.pickImage(source: ImageSource.gallery, imageQuality: 60);
     if (img == null) return;
     final bytes = await File(img.path).readAsBytes();
-    final ext = img.path.split('.').last.toLowerCase();
-    final mime = ext == 'png' ? 'image/png' : 'image/jpeg';
     setState(() {
-      _imagemBase64 = 'data:$mime;base64,${base64Encode(bytes)}';
+      _imagemBase64 = base64Encode(bytes);
     });
   }
 
